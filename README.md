@@ -1,4 +1,4 @@
-#Qwertycoin Faucet Installation
+#Qwertycoin Faucet Installation#
 
 This faucet runs on a linux environment with PHP and MYSQL, and it was tested on Ubuntu 15.04 with PHP 5.6.4 and MariaDB 5.5.
 
