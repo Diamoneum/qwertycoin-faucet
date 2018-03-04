@@ -5,27 +5,35 @@ require_once 'classes/recaptcha.php';
 require_once 'config.php';
 
 ?><!DOCTYPE html>
-<html >
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title><?php echo $faucetTitle; ?></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	<title><?php echo $faucetTitle; ?></title>
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Faucet - Qwertycoin [QWC] Official Faucet" />
+	<meta property="og:description" content="Faucet for Qwertycoin QWC is a secure and anonymous cryptocurrency, built with a focus on privacy. Qwertycoin provides instant worldwide privacy protected transactions and untraceable encrypted messaging transfers, based on CryptoNote easily CPU mining and ASIC resistant." />
+	<meta property="og:url" content="https://faucet.qwertycoin.org/" />
+	<meta property="og:site_name" content="Faucet - Qwertycoin [QWC] Official Faucet" />
+	<meta property="og:image" content="https://qwertycoin.org/wp-content/uploads/2018/02/qwccoinheader.jpg" />
+	<meta property="og:image:secure_url" content="https://qwertycoin.org/wp-content/uploads/2018/02/qwccoinheader.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="icon" type="image/icon" href="images/favicon.ico" >
 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
 
-
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css">
-
-  <script>var isAdBlockActive=true;</script>
-  <script src="js/advertisement.js"></script>
-  <script>
-  if (isAdBlockActive) { 
-    window.location = "./adblocker.php"
-  }
-  </script>
-
-
+	<script>var isAdBlockActive=true;</script>
+	<script src="js/advertisement.js"></script>
+	<script>
+	if (isAdBlockActive) { 
+		window.location = "./adblocker.php"
+	}
+</script>
 </head>
 
 <body>
@@ -34,68 +42,70 @@ require_once 'config.php';
 
     <div id="login-form">
 
-      <h3><a href="./"><img src="<?php echo $logo; ?>" height="100"></a><br><?php echo $faucetSubtitle; ?></h3>
+	  
+	  <h3><a href="./"><img src="<?php echo $logo; ?>" height="256"></a><br /><br /> <?php echo $faucetSubtitle; ?></h3>
+	  
+	  
       <fieldset>
 
         <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
-        <a href="https://hashflare.io/r/69295B0A-ads"><img src="https://hashflare.io/banners/468x60-eng-2.jpg" alt="HashFlare"></a>
+        <iframe data-aa='846609' src='//ad.a-ads.com/846609?size=468x60' scrolling='no' style='width:468px; height:60px; border:0px; padding:0;overflow:hidden' allowtransparency='true'></iframe>
         <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
 
-        <br>
+        <br />
 
+		
 
           <?php                  
 
-        $bitcoin = new jsonRPCClient('http://127.0.0.1:8070/json_rpc');
+        $bitcoin = new jsonRPCClient('http://127.0.0.1:18070/json_rpc');
 
         $balance = $bitcoin->getbalance();
-        $balanceDisponible = $balance['available_balance'];
+        $availableBalance = $balance['available_balance'];
         $lockedBalance = $balance['locked_amount'];
-        $dividirEntre = 100000000;
-        $totalBCN =  ($balanceDisponible+$lockedBalance)/$dividirEntre;
+        $coinunits = 100000000; // 8 digits after atomic
+        $totalQWC =  ($availableBalance+$lockedBalance)/$coinunits;
         
-
         $recaptcha = new Recaptcha($keys);
         //Available Balance
-        $balanceDisponibleFaucet = number_format(round($balanceDisponible/$dividirEntre,8),8,'.', '');
+        $faucetBalance = number_format(round($availableBalance/$coinunits,8),8,'.', '');
         ?>
 
         <form action="request.php" method="POST">
 
           <?php if(isset($_GET['msg'])){
-            $mensaje = $_GET['msg']; 
+            $message = $_GET['msg']; 
 
-            if($mensaje == "captcha"){?>
+            if($message == "captcha"){?>
             <div  id="alert" class="alert alert-error radius">
-              Incorrect Captcha, please answer correctly.
-            </div>
-            <?php }else if($mensaje == "wallet"){ ?>
+            Invalid Captcha, enter the correct one.            </div>
+            <?php }else if($message == "wallet"){ ?>
 
             <div id="alert" class="alert alert-error radius">
-              Please enter a valid Bytecoin Wallet.
+              Please enter the correct Qwertycoin address.
             </div>
-            <?php }else if($mensaje == "success"){ ?>
+            <?php }else if($message == "success"){ ?>
 
             <div class="alert alert-success radius">
-              You have been awarded with <?php echo $_GET['amount']; ?> BCN.<br/><br/>
-              You will receive <?php echo $_GET['amount']-0.01; ?> BCN (Fee 0.01)<br/>
-              <a target="_blank" href="http://chainradar.com/bcn/transaction/<?php echo $_GET['txid']; ?>">See it on the blockchain.</a>
+              You won <?php echo $_GET['amount']; ?> QWC.<br/><br/>
+              You will get <?php echo $_GET['amount']-0.01; ?> QWC. (Network fee 0.01)<br/>
+              <a target="_blank" href="http://xplorer.qwertycoin.org/?hash=<?php echo $_GET['txid']; ?>#blockchain_transaction">Check in Blockexplorer</a>
             </div>
-            <?php }else if($mensaje == "paymentID"){ ?>
+            <?php }else if($message == "paymentID"){ ?>
 
             <div id="alert" class="alert alert-error radius">
-              Please check again your payment ID. <br>It should have 64 characters with no special chars.
+              Check your Payment ID. <br>It should consist of 64 characters without special characters.
             </div>
-            <?php }else if($mensaje == "notYet"){ ?>
+            <?php }else if($message == "notYet"){ ?>
 
             <div id="alert" class="alert alert-warning radius">
-              You requested a reward less than 12 hours ago.
+              The qwertycoins are issued once every 12 hours. Come on later.
             </div>
             <?php } ?>
 
             <?php } ?>
             <div class="alert alert-info radius">
-              Available Balance: <?php echo $balanceDisponibleFaucet ?> BCN<br>
+              Balance: <?php echo $faucetBalance ?> QWC.<br>
               <?php
 
               $link = mysqli_connect($hostDB, $userDB, $passwordDB, $database);
@@ -115,35 +125,42 @@ require_once 'config.php';
               mysqli_close($link);
               ?>
 
-              Already paid: <?php echo $dato[0]/$dividirEntre; ?> BCN with <?php echo $dato2[0];?> total payouts.
+              Gifted: <?php echo $dato[0]/$coinunits; ?> QWC. and <?php echo $dato2[0];?> payout(s).
             </div>
 
-            <?php if($balanceDisponibleFaucet<6.1){ ?>
+            <?php if($faucetBalance<1.0){ ?>
             <div class="alert alert-warning radius">
-             Faucet is empty or balance is lower than reward. <br> Wait for a reload or donation.
+             The pool is empty or the balance is less than the gain. <br> Come on later, &ndash; maybe someone will sacrifice us a few qwertycoin.
            </div>
 
-           <?php }else{?>
+           <?php } elseif (!$link) {
+		   
+		  // $link = mysqli_connect($hostDB, $userDB, $passwordDB, $database);
 
-           <input type="text" name="wallet" required placeholder="Bytecoin Wallet">
+			 
+					die('Error' . mysql_error());
+				}  else {  ?>
+
+           <input type="text" name="wallet" required placeholder="Qwertycoin Address">
 
            <input type="text" name="paymentid" placeholder="Payment ID (Optional)" >
            <br/>
            <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
-           <iframe data-aa='74112' src='https://ad.a-ads.com/74112?size=468x60' scrolling='no' style='width:468px; height:60px; border:0px; padding:0;overflow:hidden' allowtransparency='true' frameborder='0'></iframe>
+           <iframe data-aa='846609' src='//ad.a-ads.com/846609?size=120x60' scrolling='no' style='width:120px; height:60px; border:0px; padding:0;overflow:hidden' allowtransparency='true'></iframe>		   
            <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
            <br/>
            <?php 
            echo $recaptcha->render();     
            ?>
 
-           <center><input type="submit" value="Give me my BCN!"></center>
+           <center><input type="submit" value="Get free Qwertycoin"></center>
            <br>
            <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
-           <iframe scrolling="no" frameborder="0" style="overflow:hidden;width:468px;height:60px;" src="//bee-ads.com/ad.php?id=6534"></iframe>
+          <iframe data-aa='846609' src='//ad.a-ads.com/846609?size=120x60' scrolling='no' style='width:120px; height:60px; border:0px; padding:0;overflow:hidden' allowtransparency='true'></iframe>
            <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
            <?php } ?>
            <br>
+		     <?php /*
            <div class="table-responsive">
             <table class="table table-bordered table-condensed">
               <thead>
@@ -161,10 +178,10 @@ require_once 'config.php';
               </tbody>
             </table>
           </div>
-
+*/?>
 
           <div class="table-responsive">
-            <h6><b>Last 5 Refill/Donations</b></h6>
+            <h6><b>Last 5 additions</b></h6>
             <table class="table table-bordered table-condensed">
               <thead>
                 <tr>
@@ -184,7 +201,7 @@ require_once 'config.php';
                       $time = $deposit["time"];
                       echo "<tr>";
                       echo "<th>".gmdate("Y-m-d H:i:s", $time)."</th>";
-                      echo "<th>".round($deposit["amount"]/$dividirEntre,8)."</th>";
+                      echo "<th>".round($deposit["amount"]/$coinunits,8)."</th>";
                       echo "</tr>";
                       $contador++;
                     }
@@ -196,7 +213,7 @@ require_once 'config.php';
               </tbody>
             </table>
           </div>
-          <p style="font-size:10px;">Please consider donating to keep the faucet alive. <br>Address: <?php echo $faucetAddress; ?><br>&#169; 2015 Faucet by Ratnet</p></center>
+          <p style="font-size:10px;">Donate some qwertycoin to support this crane. <br>Address: <?php echo $faucetAddress; ?></p></center>
           <footer class="clearfix">
           </footer>
         </form>

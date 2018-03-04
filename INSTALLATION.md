@@ -1,28 +1,34 @@
-#Bytecoin Faucet Installation
+#Qwertycoin Faucet Installation
 
 This faucet runs on a linux environment with PHP and MYSQL, and it was tested on Ubuntu 15.04 with PHP 5.6.4 and MariaDB 5.5.
 
-Faucet is set to work on the same server as bytecoin wallet and bytecoin daemon.
+Faucet is set to work on the same server as qwertycoin wallet and qwertycoin daemon.
 
 First of all you need to create a new database and create this table on it for the faucet to save all requests:
 ```
-CREATE TABLE IF NOT EXISTS `payouts` (
-`id` bigint(20) unsigned NOT NULL,
+CREATE TABLE `payouts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
   `ip_address` varchar(45) NOT NULL,
-  `payout_amount` double NOT NULL,
+  `payout_amount` float NOT NULL,
   `payout_address` varchar(100) NOT NULL,
   `payment_id` varchar(75) NOT NULL,
   `timestamp` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `payouts`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `payouts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 ```
 
 After you create database you need to edit config.php with all your custom parameters and also database information.
 
 
-Now for faucet to communicate with bytecoin wallet you need to run simplewallet as this:
+Now for faucet to communicate with qwertycoin wallet you need to run simplewallet as this:
 
 ```bash
-./simplewallet --wallet-file=wallet.bin --pass=password --rpc-bind-port=8070 --rpc-bind-ip=127.0.0.1
+./simplewallet --wallet-file=walletName --pass=password --rpc-bind-port=18070 --rpc-bind-ip=127.0.0.1
 ```
 
 Note: Run this command after you already created a wallet with simplewallet commands.
@@ -32,10 +38,10 @@ Note: Run this command after you already created a wallet with simplewallet comm
 * rpc-bind-port and rpc-bind-ip can be changed if so, you need to edit index.php and request.php (Please don't edit, as you may end opening the wallet rpc to the public)
 
 
-And bytecoin daemon as this:
+And qwertycoin daemon as this:
 
 ```bash
-./bytecoind --rpc-bind-ip=127.0.0.1
+./qwertycoind --restricted-rpc --enable-cors=*  --enable-blockchain-indexes --rpc-bind-ip=0.0.0.0
 ```
 
 To keep bytecoind and simplewallet on background you can use screen command.

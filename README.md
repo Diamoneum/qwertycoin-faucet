@@ -1,19 +1,55 @@
-# Bytecoin-Faucet
+#Qwertycoin Faucet Installation
 
-This is a PHP and MYSQL Faucet for Bytecoin Crypto Currency.
+This faucet runs on a linux environment with PHP and MYSQL, and it was tested on Ubuntu 15.04 with PHP 5.6.4 and MariaDB 5.5.
 
-Demo: https://freebytecoin.cf/
+Faucet is set to work on the same server as qwertycoin wallet and qwertycoin daemon.
 
-You can visit the topic on Bytecoin official forum.
+First of all you need to create a new database and create this table on it for the faucet to save all requests:
+```
+CREATE TABLE `payouts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `payout_amount` float NOT NULL,
+  `payout_address` varchar(100) NOT NULL,
+  `payment_id` varchar(75) NOT NULL,
+  `timestamp` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-https://bytecointalk.org/showthread.php?tid=72
+ALTER TABLE `payouts`
+  ADD PRIMARY KEY (`id`);
 
-![Alt text](https://freebytecoin.cf/made-in-mexico.jpg?raw=true "Made in Mexico")
+ALTER TABLE `payouts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+```
+
+After you create database you need to edit config.php with all your custom parameters and also database information.
 
 
-I developed this for free to help spread the word about Bytecoin but if you want to tip me, everything will be appreciated :D
+Now for faucet to communicate with qwertycoin wallet you need to run simplewallet as this:
 
-Donations to Ratnet Personal Wallet and Faucet for Developing:
+```bash
+./simplewallet --wallet-file=walletName --pass=password --rpc-bind-port=18070 --rpc-bind-ip=127.0.0.1
+```
 
-* Bytecoin: 24Cd68aDVYRTdxUntTQfvcAuEy7peGtA3JNRv6pToKrEBaK38Z82jqgWLyMx1UVRJ5AXmDKnmcY2TP8oknP6KSN6H6DefrK
-* Bitcoin: 1JyZyEoF8KMe1q2f9NZwELJgSpZtdBFSTU
+Note: Run this command after you already created a wallet with simplewallet commands.
+
+* wallet.bin needs to be the wallet file name that you enter when you created your wallet.
+* password needs to be the password to open your wallet
+* rpc-bind-port and rpc-bind-ip can be changed if so, you need to edit index.php and request.php (Please don't edit, as you may end opening the wallet rpc to the public)
+
+
+And qwertycoin daemon as this:
+
+```bash
+./qwertycoind --restricted-rpc --enable-cors=*  --enable-blockchain-indexes --rpc-bind-ip=0.0.0.0
+```
+
+To keep bytecoind and simplewallet on background you can use screen command.
+
+Advertisements can be edited on the index.php they are between this lines for an easy location:
+
+           <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
+           <!-- ADS ADS ADS ADS ADS ADS ADS ADS ADS -->
+
+
+After all this steps you should be ready to go ;)
